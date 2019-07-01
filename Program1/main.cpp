@@ -47,6 +47,7 @@ struct Material {
 
 Shader* shader;
 Mesh* mesh;
+Mesh* mesh2;
 
 GLuint texture_id;
 GLuint vao;
@@ -89,18 +90,12 @@ void Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Send vao
-	mesh->Render(shader);
-
-    // Do transformation
-    model = glm::rotate(model, 0.00f, glm::vec3(0.0f, 1.0f, 0.0f));
-    mv = view * model;
-
-    // Send mvp
-    glUniformMatrix4fv(uniform_mv, 1, GL_FALSE, glm::value_ptr(mv));
-
-	shader->unuseShader();
+	mesh->Render(view);
+	mesh2->Render(view);
 
     glutSwapBuffers();
+
+	shader->unuseShader();
 }
 
 
@@ -199,6 +194,7 @@ void InitMaterialsLight() {
 void InitObjects() {
 	bool res = loadOBJ("Objects/box.obj", vertices, uvs, normals);
 	mesh = new Mesh(shader, vertices, normals, uvs);
+	mesh2 = new Mesh(shader, vertices, normals, uvs);
 	texture_id = loadBMP("Textures/Yellobrk.bmp");
 }
 
