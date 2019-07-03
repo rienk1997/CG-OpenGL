@@ -12,7 +12,8 @@
 #include "texture.hpp"
 
 #include "Shader.h"
-#include "Mesh.h"
+#include "House.cpp"
+#include "Grass.cpp"
 
 using namespace std;
 
@@ -46,8 +47,9 @@ struct Material {
 //--------------------------------------------------------------------------------
 
 Shader* shader;
-Mesh* mesh;
-Mesh* mesh2;
+House* house1;
+House* house2;
+Grass* grass;
 
 GLuint texture_id;
 GLuint vao;
@@ -73,10 +75,27 @@ vector<glm::vec2> uvs;
 
 void keyboardHandler(unsigned char key, int a, int b)
 {
-    if (key == 27)
-        glutExit();
+	if (key == 27) {
+		glutExit();
+	}
+	if (key == 119) {
+		// W
+	}
+	if (key == 97) {
+		// A
+	}
+	if (key == 115) {
+		// S
+	}
+	if (key == 100) {
+		// D
+	}
 }
 
+
+void UpdateView() {
+
+}
 
 //--------------------------------------------------------------------------------
 // Rendering
@@ -88,11 +107,11 @@ void Render()
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Send vao
-	mesh->Render(view);
-	mesh2->Render(view);
-
+	
+	grass->Render(view);
+	house1->Render(view);
+	house2->Render(view);
+	   
     glutSwapBuffers();
 
 	shader->unuseShader();
@@ -140,7 +159,7 @@ void InitMatrices()
     model = glm::mat4();
 	model = glm::rotate(model, 0.3f, glm::vec3(0.0, 1.0, 0.0));
     view = glm::lookAt(
-        glm::vec3(2.0, 2.0, 7.0),
+        glm::vec3(1.0, 1.0, 20.0),
         glm::vec3(0.0, 0.0, 0.0),
         glm::vec3(0.0, 1.0, 0.0));
     projection = glm::perspective(
@@ -186,25 +205,14 @@ void InitMaterialsLight() {
 	material.power = 128;
 }
 
-//------------------------------------------------------------
-// void InitObjects()
-// Inits Objects
-//------------------------------------------------------------
-
-void InitObjects() {
-	bool res = loadOBJ("Objects/box.obj", vertices, uvs, normals);
-	mesh = new Mesh(shader, vertices, normals, uvs);
-	mesh2 = new Mesh(shader, vertices, normals, uvs);
-	texture_id = loadBMP("Textures/Yellobrk.bmp");
-}
-
-
 int main(int argc, char ** argv)
 {
      InitGlutGlew(argc, argv);
 	 shader = new Shader(vertexshader_name, fragshader_name);
      InitMatrices();
-	 InitObjects();
+	 house1 = new House(shader, glm::vec3(0.0f, 0.0f, 0.0f));
+	 house2 = new House(shader, glm::vec3(2.0f, 0.0f, 0.0f));
+	 grass = new Grass(shader, 20, 2);
 	 InitMaterialsLight();
      InitBuffers();
 

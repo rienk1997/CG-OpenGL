@@ -57,8 +57,11 @@ void Mesh::InitVao()
 	glBindVertexArray(0);
 }
 
-Mesh::Mesh(Shader* shader, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs)
+Mesh::Mesh(Shader* shader, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs, const char * texturePath)
 {
+	if (texturePath != "") {
+		this->textureID = loadBMP(texturePath);
+	}
 	this->position = glm::vec3(0.0f);
 	this->rotation = glm::vec3(0.0f);
 	this->scale = glm::vec3(1.0f);
@@ -73,6 +76,7 @@ Mesh::Mesh(Shader* shader, std::vector<glm::vec3> vertices, std::vector<glm::vec
 
 Mesh::~Mesh()
 {
+
 }
 
 void Mesh::updateUniforms(glm::mat4 view)
@@ -134,9 +138,15 @@ void Mesh::Render(glm::mat4 view)
 
 	shader->useShader();
 
+	if (this->textureID) {
+		glBindTexture(GL_TEXTURE_2D, this->textureID);
+	}
 	glBindVertexArray(this->vao);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glBindVertexArray(0);
-
+	if (this->textureID) {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 	shader->unuseShader();
+
 }

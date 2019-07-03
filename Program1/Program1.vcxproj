@@ -88,6 +88,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glsl.cpp" />
+    <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="House.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="objloader.cpp" />
@@ -101,7 +103,6 @@
     <ClInclude Include="objloader.hpp" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="texture.hpp" />
   </ItemGroup>
   <ItemGroup>

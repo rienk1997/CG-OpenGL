@@ -10,6 +10,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "glsl.h"
+#include "objloader.hpp"
+#include "texture.hpp"
 
 #include "Shader.h"
 
@@ -18,6 +20,7 @@ class Mesh
 private:
 	Shader* shader;
 	GLuint vao;
+	GLuint textureID;
 
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
@@ -34,7 +37,7 @@ private:
 	void updateUniforms(glm::mat4 view);
 	void updateModelMatrix();
 public:
-	Mesh(Shader* shader, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs);
+	Mesh(Shader* shader, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> uvs, const char * texturePath = "");
 	~Mesh();
 
 	void setPosition(const glm::vec3 position);
