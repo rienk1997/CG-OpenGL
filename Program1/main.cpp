@@ -12,6 +12,7 @@
 #include "texture.hpp"
 
 #include "Shader.h"
+#include "Camera.h"
 #include "House.cpp"
 #include "Grass.cpp"
 
@@ -23,7 +24,9 @@ using namespace std;
 //--------------------------------------------------------------------------------
 
 const int WIDTH = 800, HEIGHT = 600;
+const int CENTER_X = WIDTH / 2, CENTER_Y = HEIGHT / 2;
 const char * fragshader_name = "fragmentshader.fsh";
+const char * fragshader_name2 = "fragmentshader-nonspecular.fsh";
 const char * vertexshader_name = "vertexshader.vsh";
 unsigned const int DELTA = 10;
 
@@ -47,6 +50,7 @@ struct Material {
 //--------------------------------------------------------------------------------
 
 Shader* shader;
+Shader* shader2;
 House* house1;
 House* house2;
 Grass* grass;
@@ -61,6 +65,14 @@ glm::mat4 mv;
 LightSource light;
 Material material;
 
+// Camera.
+Camera camera(glm::vec3(-5, 1, 8));
+int currentZoom = 0;
+
+// Timing.
+float deltaTime = 0.0f;	// Time between current frame and last frame.
+float lastFrame = 0.0f;
+
 //--------------------------------------------------------------------------------
 // Mesh variables
 //--------------------------------------------------------------------------------
@@ -69,6 +81,16 @@ vector<glm::vec3> vertices;
 vector<glm::vec3> normals;
 vector<glm::vec2> uvs;
 
+
+void mouseHandler(int x, int y) {
+	camera.ProcessMouseMovement(x - CENTER_X, CENTER_Y - y);
+
+	// If not already, warp the cursor to the center.
+	if (x != CENTER_X || y != CENTER_Y)
+	{
+		glutWarpPointer(CENTER_X, CENTER_Y);
+	}
+}
 //--------------------------------------------------------------------------------
 // Keyboard handling
 //--------------------------------------------------------------------------------
@@ -78,17 +100,27 @@ void keyboardHandler(unsigned char key, int a, int b)
 	if (key == 27) {
 		glutExit();
 	}
+	if (key == 99) {
+		// C.
+		camera.SceneFromAbove();
+	}
 	if (key == 119) {
 		// W
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	}
 	if (key == 97) {
 		// A
+		camera.ProcessKeyboard(LEFT, deltaTime);
+
 	}
 	if (key == 115) {
 		// S
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	}
 	if (key == 100) {
 		// D
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+
 	}
 }
 
@@ -103,11 +135,17 @@ void UpdateView() {
 
 void Render()
 {
+	const float currentFrame = glutGet(GLUT_ELAPSED_TIME) / 100.0f;
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
 	shader->useShader();
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
+	//house1->Move(glm::vec3(0.0, 0.01, 0.0));
+	view = camera.GetViewMatrix();
 	grass->Render(view);
 	house1->Render(view);
 	house2->Render(view);
@@ -144,8 +182,10 @@ void InitGlutGlew(int argc, char **argv)
     glutCreateWindow("OpenGL World");
     glutDisplayFunc(Render);
     glutKeyboardFunc(keyboardHandler);
+	glutMotionFunc(mouseHandler);
     glutTimerFunc(DELTA, Render, 0);
 
+	glutSetCursor(GLUT_CURSOR_NONE);
     glewInit();
 }
 
@@ -175,7 +215,7 @@ void InitMatrices()
 // Allocates and fills buffers
 //------------------------------------------------------------
 
-void InitBuffers()
+void InitBuffers(Shader* shader)
 {
 	shader->useShader();
     // Make uniform var
@@ -209,18 +249,20 @@ int main(int argc, char ** argv)
 {
      InitGlutGlew(argc, argv);
 	 shader = new Shader(vertexshader_name, fragshader_name);
+	 shader2 = new Shader(vertexshader_name, fragshader_name2);
      InitMatrices();
 	 house1 = new House(shader, glm::vec3(0.0f, 0.0f, 0.0f));
-	 house2 = new House(shader, glm::vec3(2.0f, 0.0f, 0.0f));
+	 house2 = new House(shader2, glm::vec3(2.0f, 0.0f, 0.0f));
 	 grass = new Grass(shader, 20, 2);
 	 InitMaterialsLight();
-     InitBuffers();
+     InitBuffers(shader);
+     InitBuffers(shader2);
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
     HWND hWnd = GetConsoleWindow();
-    ShowWindow(hWnd, SW_HIDE);
+    ShowWindow(hWnd, SW_SHOW);
 
     glutMainLoop();
 

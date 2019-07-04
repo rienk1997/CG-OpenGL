@@ -23,8 +23,9 @@ public:
 		base->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 		base->move(basePosition);
 		// Roof
-		bool res2 = loadOBJ("Objects/box.obj", verticesRoof, uvsRoof, normalsRoof);
-		roof = new Mesh(shader, verticesRoof, normalsRoof, uvsRoof, "Textures/uvtemplate.bmp");
+		bool res2 = loadOBJ("Objects/car.obj", verticesRoof, uvsRoof, normalsRoof);
+		roof = new Mesh(shader, verticesRoof, normalsRoof, uvsRoof, "Textures/red.bmp");
+		roof->setScale(glm::vec3(0.05));
 		roof->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
 		roof->move(basePosition);
 	}
@@ -34,5 +35,9 @@ public:
 		base->Render(view);
 	}
 
+	void House::Move(glm::vec3 direction) {
+		roof->move(direction);
+		base->move(direction);
+	}
 };
 
