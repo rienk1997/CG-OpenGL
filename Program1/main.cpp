@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "House.cpp"
 #include "Grass.cpp"
+#include "Windmill.cpp"
 
 using namespace std;
 
@@ -54,6 +55,7 @@ Shader* shader2;
 House* house1;
 House* house2;
 Grass* grass;
+Windmill* windmill1;
 
 GLuint texture_id;
 GLuint vao;
@@ -66,7 +68,7 @@ LightSource light;
 Material material;
 
 // Camera.
-Camera camera(glm::vec3(-5, 1, 8));
+Camera camera(glm::vec3(0, 1, -8));
 int currentZoom = 0;
 
 // Timing.
@@ -149,6 +151,7 @@ void Render()
 	grass->Render(view);
 	house1->Render(view);
 	house2->Render(view);
+	windmill1->Render(view);
 	   
     glutSwapBuffers();
 
@@ -254,6 +257,7 @@ int main(int argc, char ** argv)
 	 house1 = new House(shader, glm::vec3(0.0f, 0.0f, 0.0f));
 	 house2 = new House(shader2, glm::vec3(2.0f, 0.0f, 0.0f));
 	 grass = new Grass(shader, 20, 2);
+	 windmill1 = new Windmill(shader2, glm::vec3(5.0f, 0.0f, 0.0f));
 	 InitMaterialsLight();
      InitBuffers(shader);
      InitBuffers(shader2);

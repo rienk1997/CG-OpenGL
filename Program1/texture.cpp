@@ -7,7 +7,7 @@
 
 GLuint loadBMP(const char * imagepath) {
 
-	printf("Reading image %s\n", imagepath);
+                                                                           	printf("Reading image %s\n", imagepath);
 
 	// Data read from the header of the BMP file
 	unsigned char header[54];

@@ -1,6 +1,6 @@
-#include "Mesh.h"
+#include "IObject.h"
 
-class House{
+class House: public IObject{
 	Mesh *base;
 	Mesh *roof;
 
@@ -12,11 +12,12 @@ class House{
 	vector<glm::vec3> normalsRoof;
 	vector<glm::vec2> uvsRoof;
 
-	glm::vec3 basePosition;
-
 public:
-	House::House(Shader *shader, glm::vec3 position) {
-		basePosition = position;
+	House::House(Shader *shader, glm::vec3 position):IObject(shader, position) {
+		this->Build(shader);
+	}
+
+	void House::Build(Shader* shader) {
 		// Base
 		bool res = loadOBJ("Objects/box.obj", verticesBase, uvsBase, normalsBase);
 		base = new Mesh(shader, verticesBase, normalsBase, uvsBase, "Textures/Yellobrk.bmp");
